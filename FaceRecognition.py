@@ -1,11 +1,8 @@
-import threading
-import _thread
+import os
 import time
 import face_recognition
-import lock as lock
 from PIL import Image, ImageDraw
 import cv2
-import Buildings
 from Person import Person
 from Person import Manager
 
@@ -22,54 +19,11 @@ def encodingImage(name):
     return face_encoding
 
 
-def comparePersons(persons, encodings):
-    p = Person()
-    cam = cv2.VideoCapture(0)
-    for i in range(1):
-        val, image = cam.read()
-        cv2.imwrite("./images/" + str(i) + '.jpg', image)
-    cam.release()
-    cv2.destroyAllWindows()
-
-    # Load test image to find face in
-    test_image = face_recognition.load_image_file('./images/' + str(i) + '.jpg')
-
-    # Find face in test image
-    face_locations = face_recognition.face_locations(test_image)
-    face_encodings = face_recognition.face_encodings(test_image, face_locations)
-
-    # Convert to PIL format
-    pil_image = Image.fromarray(test_image)
-
-    # Create a ImageDraw instance
-    draw = ImageDraw.Draw(pil_image)
-
-    # Loop through faces in test image
-    for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
-        matches = face_recognition.compare_faces(encodings, face_encoding)
-
-        name = Person()
-
-        if True in matches:
-            first_match_index = matches.index(True)
-            name = persons[first_match_index]
-
-        if name.FirstName is not None:
-            p = name
-
-    del draw
-
-    # Display image
-    # pil_image.show()
-
-    return p
-
-
 def compareThreadPersons(building):
     # Let the person decide if he wants a different floor
     time.sleep(3)
 
-    p = Person()
+    person = None
     cam = cv2.VideoCapture(0)
     while flag:
         defined = False
@@ -98,19 +52,27 @@ def compareThreadPersons(building):
                 name = building.residents[first_match_index]
 
             if name.FirstName is not None:
-                if p.FirstName == name.FirstName and p.LastName == name.LastName:
+                if person.FirstName == name.FirstName and person.LastName == name.LastName:
                     defined = True
-                p = name
+                person = name
 
         del draw
 
-        if isinstance(p, Manager):
+        # Delete the taken pic after taking her to use the compare func
+        try:
+            os.remove('./images/person.jpg')
+        except os.error:
+            print('error')
+
+        # If the person in front of the camera is manager we pass the recognition part to let him work on the elevator
+        if isinstance(person, Manager):
             break
 
-        if p.FirstName is not None and not defined:
+        # Checking if the camera did recognize a person and if this person has not just recognized
+        if person is not None and not defined:
             # If the camera identify new person it checks if the elevator is ready for use
             if building.ready:
-                sendFromThread(p, building)
+                sendFromThread(person, building)
 
         else:
             continue
