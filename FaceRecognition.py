@@ -3,7 +3,6 @@ import time
 import face_recognition
 from PIL import Image, ImageDraw
 import cv2
-from Person import Person
 from Person import Manager
 
 flag = True
@@ -20,17 +19,25 @@ def encodingImage(name):
 
 
 def compareThreadPersons(building):
+
+    # params:
+    # building - the specific building we work on
+
     # Let the person decide if he wants a different floor
     time.sleep(3)
 
-    person = None
-    cam = cv2.VideoCapture(0)
-    while flag:
-        defined = False
+    person = None  # Specific person in the picture
+    personList = []  # List of person, In case there are more than 1 person in front of the camera
+
+    cam = cv2.VideoCapture(0)  # Open the camera
+
+    while flag:  # Flag is controlled by the menu.
         val, image = cam.read()
         cv2.imwrite('./images/person.jpg', image)
+
         # Load test image to find face in
         test_image = face_recognition.load_image_file('./images/person.jpg')
+
         # Find face in test image
         face_locations = face_recognition.face_locations(test_image)
         face_encodings = face_recognition.face_encodings(test_image, face_locations)
@@ -42,18 +49,20 @@ def compareThreadPersons(building):
         draw = ImageDraw.Draw(pil_image)
 
         # Loop through faces in test image
-        for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+        for (_, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
             matches = face_recognition.compare_faces(building.encoderList, face_encoding)
 
-            name = Person()
+            name = None
 
             if True in matches:
                 first_match_index = matches.index(True)
                 name = building.residents[first_match_index]
 
-            if name.FirstName is not None:
-                if person.FirstName == name.FirstName and person.LastName == name.LastName:
-                    defined = True
+            # If statement to check if the person in from of the camera is already recognized.
+            if name is not None:
+                if person is not None and person.FirstName == name.FirstName and person.LastName == name.LastName:
+                    person.defined = True
+                personList.append(name)
                 person = name
 
         del draw
@@ -69,10 +78,11 @@ def compareThreadPersons(building):
             break
 
         # Checking if the camera did recognize a person and if this person has not just recognized
-        if person is not None and not defined:
+        if person and not person.defined:
             # If the camera identify new person it checks if the elevator is ready for use
             if building.ready:
-                sendFromThread(person, building)
+                sendFromThread(personList, building)
+                personList = []  # After we done with all the persons in the elevator
 
         else:
             continue
@@ -86,9 +96,13 @@ def compareThreadPersons(building):
     cv2.destroyAllWindows()
 
 
-def sendFromThread(person, building):
-    if person is None:
-        print("No Person found")
-    else:
-        print("Hi " + person.FirstName + " " + person.LastName + " " + "going up to floor {} ".format(person.floor))
-        building.moveElevator(person.floor)
+def sendFromThread(personList, building):
+    found = False
+    for person in personList:
+        if person is None:
+            print("No Person found")
+        else:
+            found = True
+            print("Hi " + person.FirstName + " " + person.LastName + " " + "going up to floor {} ".format(person.floor))
+    if found:
+        building.moveElevator(personList)

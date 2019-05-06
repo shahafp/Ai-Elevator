@@ -5,7 +5,7 @@ class Person:
         self.FirstName = firstname
         self.LastName = lastname
         self.floor = floor
-        self.identified = False
+        self.defined = False
 
     def __str__(self):
         return "First Name: {} Last Name: {} In Floor {}".format(self.FirstName,self.LastName, self.floor)

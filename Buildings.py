@@ -4,7 +4,6 @@ import os
 import cv2
 
 from Person import Person
-import webbrowser
 import FaceRecognition
 
 
@@ -63,13 +62,15 @@ class Building:
         for p in self.residents:
             print("Resident name: {} {} in Floor #{}".format(p.FirstName, p.LastName, p.floor))
 
-    def moveElevator(self, floor):
+    def moveElevator(self, personList):
         self.ready = False
-        while self.elevator < int(floor) + 1:
-            print(str(self.elevator) + ' ▲ ')
-            time.sleep(2)
-            self.elevator += 1
-        print("Elevator has arrive to floor # {}".format(self.elevator))
+        for person in personList:
+            while self.elevator < person.floor + 1:
+                print(str(self.elevator) + ' ▲ ')
+                time.sleep(2)
+                self.elevator += 1
+            print("Elevator has arrive to floor # {}".format(self.elevator))
+            time.sleep(1)
         time.sleep(1)
         print("Elevator goes to floor 0")
         self.moveElevatorDown()

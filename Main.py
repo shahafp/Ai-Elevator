@@ -8,7 +8,7 @@ import time
 
 if __name__ == '__main__':
 
-    Shahaf = Manager("Shahaf", "Pariente")
+    Shahaf = Person("Shahaf", "Pariente",4)
     Meidan = Person("Meidan", "Nasi", 2)
     Guy = Person("Guy", "Yanko", 3)
     Oron = Person("Oron", "Pariente", 5)
