@@ -1,6 +1,7 @@
 import time
 import os
 import cv2
+import pickle
 
 from Person import Person
 import FaceRecognition
@@ -20,16 +21,30 @@ class Building:
             self.encoderList = encoderList
 
     def addPerson(self, person):
-        self.residents.append(person)
+        with open("Residents.pk1", "rb+") as output:
+            self.residents = pickle.load(output)
+            self.residents.append(person)
+            output.seek(0)
+            pickle.dump(self.residents, output, pickle.HIGHEST_PROTOCOL)
+
         self.encoderList.append(FaceRecognition.encodingImage(person.FirstName + " " + person.LastName))
         print("Successfully Added!")
+
+    def addList(self, pList):
+        for person in pList:
+            self.residents.append(person)
 
     def addResident(self):
         name = input("Enter the name of the person(First Name): ").capitalize()
         last = input("Enter the name of the person(Last Name): ").capitalize()
         floor = int(input("Enter his floor"))
         person = Person(name, last, floor)
-        self.residents.append(person)
+        with open("Residents.pk1", "rb+") as output:
+            self.residents = pickle.load(output)
+            self.residents.append(person)
+            output.seek(0)
+            pickle.dump(self.residents, output, pickle.HIGHEST_PROTOCOL)
+
         if not os.path.exists("./images/" + name + " " + last):
             os.mkdir("./images/" + name + " " + last)
         cam = cv2.VideoCapture(0)

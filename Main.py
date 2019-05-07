@@ -5,16 +5,17 @@ import FaceRecognition
 import threading
 import time
 import pyttsx3
+import pickle
 
 if __name__ == '__main__':
 
-    # engine = pyttsx3.init()
-    # engine.say("Hello and welcome!")
-    # voices = engine.getProperty('voices')
-    # engine.setProperty('voice', voices[0].id)
-    # engine.setProperty('rate', 120)  # 120 words per minute
-    # engine.setProperty('volume', 0.5)
-    # engine.runAndWait()
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', 'english+f3')
+    engine.setProperty('rate', 120)  # 120 words per minute
+    engine.setProperty('volume', 0.5)
+    engine.say("welcome!")
+    engine.runAndWait()
 
     Shahaf = Manager("Shahaf", "Pariente")
     Meidan = Person("Meidan", "Nasi", 2)
@@ -22,12 +23,20 @@ if __name__ == '__main__':
     Oron = Person("Oron", "Pariente", 5)
     Dana = Person("Dana", "Avraham", 1)
 
+    personList = [Shahaf, Meidan, Guy, Oron, Dana]
+
+    with open("Residents.pk1", "wb") as output:
+        pickle.dump(personList, output, pickle.HIGHEST_PROTOCOL)
+
+    personList = []
+
+    with open("Residents.pk1", "rb+") as output:
+        personList = pickle.load(output)
+
     b1 = Buildings.Building(9)
-    b1.addPerson(Shahaf)
-    b1.addPerson(Meidan)
-    b1.addPerson(Oron)
-    b1.addPerson(Dana)
-    b1.addPerson(Guy)
+    # b1.addList(personList)
+    for person in personList:
+        b1.addPerson(person)
 
     # Thread to the camera
     x = threading.Thread(target=FaceRecognition.compareThreadPersons, args=(b1,))

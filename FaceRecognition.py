@@ -74,6 +74,7 @@ def compareThreadPersons(building):
                     person.defined = True
                 personList.append(name)
                 person = name
+                print(person)
 
         del draw
 
@@ -113,9 +114,10 @@ def sendFromThread(personList, building):
             found = True
 
             engine = pyttsx3.init()
-            engine.say("Hello " + person.FirstName + " Going up to floor " + str(person.floor))
+            engine.setProperty('voice', 'english+f3')
             engine.setProperty('rate', 100)  # 120 words per minute
             engine.setProperty('volume', 0.9)
+            engine.say("Hello " + person.FirstName + " Going up to floor " + str(person.floor))
             engine.runAndWait()
             print("Hi " + person.FirstName + " " + person.LastName + " " + "going up to floor {} ".format(person.floor))
     if found:
