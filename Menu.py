@@ -44,26 +44,31 @@ def Menu(building):
     print("Menu: \n"
           "1) Go to different floor\n"
           "2) Configuration\n"
-          "3) Shut down the system\n")
+          "3) Back to Recognition\n"
+          "4) Shut down the system\n")
 
     menuSwitch = {
         "1": diffFloor,
         "2": conf,
-        "3": "return"
+        "3": FaceRecognition.backToRecognition,
+        "4": "return"
     }
 
     while True:
-        choice = input("Make a choice.\n")
-        if choice == "1" or choice == "2" or choice=="3":
+        choice = int(input("Make a choice.\n"))
+        if choice in range(1, 5):
             break
         else:
             print("Wrong input!\n"
                   "Please choose again\n")
 
-    answer = menuSwitch[choice]
+    answer = menuSwitch[str(choice)]
     if answer is "return":
         return
-    answer()
+    if choice is 3:
+        answer(building)
+    else:
+        answer()
     # call the menu again till the system is shut down
     Menu(building)
 

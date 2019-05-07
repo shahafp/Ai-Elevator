@@ -1,6 +1,5 @@
 import time
 import os
-
 import cv2
 
 from Person import Person
@@ -31,10 +30,6 @@ class Building:
         floor = int(input("Enter his floor"))
         person = Person(name, last, floor)
         self.residents.append(person)
-        # print("Enter his Picture to this folder.\n"
-        #       "Make sure you give the image the name of the person,"
-        #       "Example: Israel Israeli")
-        cv2.destroyAllWindows()
         if not os.path.exists("./images/" + name + " " + last):
             os.mkdir("./images/" + name + " " + last)
         cam = cv2.VideoCapture(0)
@@ -42,7 +37,6 @@ class Building:
             val, image = cam.read()
             cv2.imwrite("./images/" + name + " " + last + "/" + name + " " + last + '.jpg', image)
         cam.release()
-        input()
         self.encoderList.append(FaceRecognition.encodingImage(person.FirstName + " " + person.LastName))
         print("Successfully Added!")
 

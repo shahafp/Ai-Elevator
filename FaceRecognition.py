@@ -1,21 +1,29 @@
 import os
+import threading
 import time
 import face_recognition
 from PIL import Image, ImageDraw
 import cv2
 from Person import Manager
+import pyttsx3
 
 flag = True
 
 
 def encodingImage(name):
-    # Image 1
+
+    # Image Load
     image_of_person = face_recognition.load_image_file('./images/' + name + '/' + name + '.jpg')
 
     # The encoding function return array and we need only the first column
     face_encoding = face_recognition.face_encodings(image_of_person)[0]
 
     return face_encoding
+
+
+def backToRecognition(b1):
+    x = threading.Thread(target=compareThreadPersons, args=(b1,))
+    x.start()
 
 
 def compareThreadPersons(building):
@@ -32,6 +40,8 @@ def compareThreadPersons(building):
     cam = cv2.VideoCapture(0)  # Open the camera
 
     while flag:  # Flag is controlled by the menu.
+        # if person has not detected do thread keep running
+
         val, image = cam.read()
         cv2.imwrite('./images/person.jpg', image)
 
@@ -84,8 +94,6 @@ def compareThreadPersons(building):
                 sendFromThread(personList, building)
                 personList = []  # After we done with all the persons in the elevator
 
-        else:
-            continue
 
         # Display the resulting frame
         # cv2.imshow('frame', image)
@@ -103,6 +111,12 @@ def sendFromThread(personList, building):
             print("No Person found")
         else:
             found = True
+
+            engine = pyttsx3.init()
+            engine.say("Hello " + person.FirstName + " Going up to floor " + str(person.floor))
+            engine.setProperty('rate', 100)  # 120 words per minute
+            engine.setProperty('volume', 0.9)
+            engine.runAndWait()
             print("Hi " + person.FirstName + " " + person.LastName + " " + "going up to floor {} ".format(person.floor))
     if found:
         building.moveElevator(personList)

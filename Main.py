@@ -4,11 +4,19 @@ import Menu
 import FaceRecognition
 import threading
 import time
-
+import pyttsx3
 
 if __name__ == '__main__':
 
-    Shahaf = Person("Shahaf", "Pariente",4)
+    # engine = pyttsx3.init()
+    # engine.say("Hello and welcome!")
+    # voices = engine.getProperty('voices')
+    # engine.setProperty('voice', voices[0].id)
+    # engine.setProperty('rate', 120)  # 120 words per minute
+    # engine.setProperty('volume', 0.5)
+    # engine.runAndWait()
+
+    Shahaf = Manager("Shahaf", "Pariente")
     Meidan = Person("Meidan", "Nasi", 2)
     Guy = Person("Guy", "Yanko", 3)
     Oron = Person("Oron", "Pariente", 5)
