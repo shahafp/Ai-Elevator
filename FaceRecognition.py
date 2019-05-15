@@ -74,7 +74,6 @@ def compareThreadPersons(building):
                     person.defined = True
                 personList.append(name)
                 person = name
-                print(person)
 
         del draw
 
@@ -95,7 +94,6 @@ def compareThreadPersons(building):
                 sendFromThread(personList, building)
                 personList = []  # After we done with all the persons in the elevator
 
-
         # Display the resulting frame
         # cv2.imshow('frame', image)
         if cv2.waitKey(20) & 0XFF == ord('q'):
@@ -112,7 +110,6 @@ def sendFromThread(personList, building):
             print("No Person found")
         else:
             found = True
-
             engine = pyttsx3.init()
             engine.setProperty('voice', 'english+f3')
             engine.setProperty('rate', 100)  # 120 words per minute

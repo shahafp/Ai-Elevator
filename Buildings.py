@@ -21,7 +21,7 @@ class Building:
             self.encoderList = encoderList
 
     def addPerson(self, person):
-        with open("Residents.pk1", "rb+") as output:
+        with open("Residents.pk2", "rb+") as output:
             self.residents = pickle.load(output)
             self.residents.append(person)
             output.seek(0)
@@ -33,13 +33,14 @@ class Building:
     def addList(self, pList):
         for person in pList:
             self.residents.append(person)
+            self.encoderList.append(FaceRecognition.encodingImage(person.FirstName + " " + person.LastName))
 
     def addResident(self):
         name = input("Enter the name of the person(First Name): ").capitalize()
         last = input("Enter the name of the person(Last Name): ").capitalize()
         floor = int(input("Enter his floor"))
         person = Person(name, last, floor)
-        with open("Residents.pk1", "rb+") as output:
+        with open("Residents.pk2", "rb+") as output:
             self.residents = pickle.load(output)
             self.residents.append(person)
             output.seek(0)
@@ -61,8 +62,11 @@ class Building:
 
         for p in self.residents:
             if p.FirstName == name and p.LastName == last:
+                self.encoderList.pop(self.residents.index(p))
                 self.residents.remove(p)
-                self.encoderList.remove(FaceRecognition.encodingImage(p.FirstName + " " + p.LastName))
+                with open("Residents.pk2", "rb+") as output:
+                    output.seek(0)
+                    pickle.dump(self.residents, output, pickle.HIGHEST_PROTOCOL)
 
     def editResident(self):
         pass
