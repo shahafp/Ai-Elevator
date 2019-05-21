@@ -60,7 +60,7 @@ def compareThreadPersons(building):
 
         # Loop through faces in test image
         for (_, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
-            matches = face_recognition.compare_faces(building.encoderList, face_encoding)
+            matches = face_recognition.compare_faces(building.encoderList, face_encoding, tolerance=0.5)
 
             name = None
 
@@ -73,6 +73,7 @@ def compareThreadPersons(building):
                 if person is not None and person.FirstName == name.FirstName and person.LastName == name.LastName:
                     person.defined = True
                 personList.append(name)
+                print(name)
                 person = name
 
         del draw

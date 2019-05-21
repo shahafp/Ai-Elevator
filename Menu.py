@@ -5,9 +5,8 @@ import FaceRecognition
 def Menu(building):
     def diffFloor():
         FaceRecognition.flag = False
-        answer = int(input("Enter the floor number you wish to go"))
+        answer = int(input("Enter the floor number you wish to go "))
         building.moveElevator(answer)
-        pass
 
     def conf():
         print("Configuration Menu:\n"
@@ -33,7 +32,7 @@ def Menu(building):
             if out is "return":
                 return
             out()
-            answer2 = input("Need anything else?").lower()
+            answer2 = input("Need anything else? ").lower()
             if answer2 == "yes":
                 conf()
             else:

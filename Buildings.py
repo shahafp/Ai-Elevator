@@ -21,7 +21,7 @@ class Building:
             self.encoderList = encoderList
 
     def addPerson(self, person):
-        with open("Residents.pk2", "rb+") as output:
+        with open("Residents.pk1", "rb+") as output:
             self.residents = pickle.load(output)
             self.residents.append(person)
             output.seek(0)
@@ -40,7 +40,7 @@ class Building:
         last = input("Enter the name of the person(Last Name): ").capitalize()
         floor = int(input("Enter his floor"))
         person = Person(name, last, floor)
-        with open("Residents.pk2", "rb+") as output:
+        with open("Residents.pk1", "rb+") as output:
             self.residents = pickle.load(output)
             self.residents.append(person)
             output.seek(0)
@@ -64,7 +64,7 @@ class Building:
             if p.FirstName == name and p.LastName == last:
                 self.encoderList.pop(self.residents.index(p))
                 self.residents.remove(p)
-                with open("Residents.pk2", "rb+") as output:
+                with open("Residents.pk1", "rb+") as output:
                     output.seek(0)
                     pickle.dump(self.residents, output, pickle.HIGHEST_PROTOCOL)
 
@@ -75,14 +75,18 @@ class Building:
         for p in self.residents:
             print("Resident name: {} {} in Floor #{}".format(p.FirstName, p.LastName, p.floor))
 
+    def floorNum(self, person):
+        return person.floor
+
     def moveElevator(self, personList):
         self.ready = False
+        personList.sort(key=self.floorNum)
         for person in personList:
-            while self.elevator < person.floor + 1:
+            while self.elevator < person.floor:
                 print(str(self.elevator) + ' ▲ ')
                 time.sleep(2)
                 self.elevator += 1
-            print("Elevator has arrive to floor # {}".format(self.elevator))
+            print("Elevator has arrive to {} floor # {}".format(person.FirstName, self.elevator))
             time.sleep(1)
         time.sleep(1)
         print("Elevator goes to floor 0")
